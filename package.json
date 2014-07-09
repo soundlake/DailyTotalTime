@@ -1,0 +1,35 @@
+{
+    "main": "index.html",
+    "name": "daily-total-time",
+    "description": "Simple stopwatch for estimating total working time.",
+    "version": "1.0",
+    "keywords": ["stopwatch", "node-webkit"],
+
+    "maintainers": [{
+        "name": "Sinyeol An",
+        "email": "soundlake@gmail.com",
+        "web": "http://soundlake.net"
+    }],
+    "repositories": [{
+        "type": "git",
+        "url": "https://github.com/soundlake/DailyTotalTime.git"
+    }],
+
+    "single-instance": true,
+    "no-edit-menu": true,
+    "window": {
+        "title": "Daily Total Time",
+        "icon": "oddholes.jpeg",
+        "toolbar": false,
+        "width": 200,
+        "height": 250,
+        "position": "mouse",
+        "resizable": false,
+        "min_width": 80,
+        "min_height": 100,
+        "max_width": 400,
+        "max_height": 500
+    },
+    "webkit": {
+    }
+}
