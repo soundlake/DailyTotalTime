@@ -57,6 +57,8 @@ drawRuler = function (sw) {
       r1 = sw.r * 2,
       r2 = r1 - 10;
 
+  if (sw.total / (60 * 15)) return ;
+
   sw.context.lineWidth = 0.25;
   sw.context.strokeStyle = '#000';
   for (; i < num; i++) {
