@@ -15,7 +15,6 @@
         "url": "https://github.com/soundlake/DailyTotalTime.git"
     }],
 
-    "single-instance": true,
     "no-edit-menu": true,
     "window": {
         "title": "Daily Total Time",

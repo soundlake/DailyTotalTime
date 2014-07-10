@@ -1,71 +1,121 @@
 /*
+ * GUI
+ */
+var gui = {};
+gui.today = document.getElementById('today');
+gui.today.textContent = (new Date()).toLocaleDateString('ko-KR');
+gui.total = document.getElementById('total');
+gui.canvas = document.getElementById('cvs');
+gui.button = document.getElementById('button');
+gui.notice = document.getElementById('notice');
+
+/*
  * clock animation
  */
-function Stopwatch () {
-  this.canvas = document.getElementById('cvs');
-  this.canvas.addEventListener('click', this.toggle.bind(this));
-  this.context = this.canvas.getContext('2d');
+var stopwatch = {
+  context   : gui.canvas.getContext('2d'),
+  total     : 3600,    // 1 hour
+  partial   : 0,       // time passed
+  state     : 'ready',
+  init      : 0,       // beginning of current phase
+  now       : 0,       // current time
   
-  this.total = 3600;
-  this.partial = 0;
-  this.isActive = false;
-  this.init = 0;
-  this.now = 0;
-  
-  this.x = this.canvas.width / 2;
-  this.y = this.canvas.height / 2;
-  this.radius = this.canvas.width / 4;
-  
-  this.foreground_color = '#ffd36d';
-  this.background_color = '#ffaf00';
-  
-  this.aBegin = Math.PI * -0.5;
-}
-Stopwatch.prototype = {
-  get ratio () { return this.partial / this.total; },
-  get aEnd () { return Math.PI * (2 * this.ratio - 0.5); }
-}
-Stopwatch.prototype.toggle = function () {
-  this.isActive = !this.isActive;
-  this.init = Date.now();
-}
-Stopwatch.prototype.update = function () {
+  x         : gui.canvas.width / 2,
+  y         : gui.canvas.height / 2,
+  r         : gui.canvas.width / 4,  // radius
+  fg_color  : '#ffaf00',
+  bg_color  : '#ffd36d',
+  init_angle: Math.PI * -0.5
+};
+update = function (sw) {
   var interval = 1000, // millisecond
       delta;
-  if (this.ratio < 1 && this.isActive) {
-    this.now = Date.now();
-    delta = this.now - this.init;
+  if (sw.partial < sw.total && sw.state == 'run') {
+    sw.now = Date.now();
+    delta = sw.now - sw.init;
     if (delta > interval) {
-      this.partial += delta / interval;
+      sw.partial += delta / interval;
       delta %= interval;
-      this.init = this.now - delta;
+      sw.init = sw.now - delta;
     }
+  } else if (sw.state == 'run') {
+    sw.state = 'stop';
+    alert('짝짝짝! 오늘의 할 일 끝!');
   }
-}
-Stopwatch.prototype.drawBack = function () {
-  this.context.beginPath();
-  this.context.arc(this.x, this.y, this.radius * 1.99, 0, Math.PI * 2);
-  this.context.fillStyle = this.background_color;
-  this.context.fill();
-}
-Stopwatch.prototype.drawWatch = function () {
-  this.context.beginPath();
-  this.context.arc(this.x, this.y, this.radius, this.aBegin, this.aEnd, false);
-  this.context.lineWidth = this.radius * 2;
-  this.context.strokeStyle = this.foreground_color;
-  this.context.stroke();
-}
-Stopwatch.prototype.draw = function () {
-  this.drawBack();
-  this.drawWatch();
-}
-Stopwatch.prototype.animate = function () {
-  this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-  this.update();
-  this.draw();
-  
-  window.requestNextAnimationFrame(this.animate.bind(this));
-}
+};
+drawBack = function (sw) {
+  sw.context.beginPath();
+  sw.context.arc(sw.x, sw.y, sw.r * 1.99, 0, Math.PI * 2);
+  sw.context.fillStyle = sw.bg_color;
+  sw.context.fill();
+};
+drawRuler = function (sw) {
+  var num = sw.total / (60 * 15), // every 15 minutes
+      i = 0,
+      theta,
+      x1, x2, y1, y2,
+      r1 = sw.r * 2,
+      r2 = r1 - 10;
 
-var sw = new Stopwatch();
-sw.animate();
+  sw.context.lineWidth = 0.25;
+  sw.context.strokeStyle = '#000';
+  for (; i < num; i++) {
+    theta = Math.PI * 2 * i / num;
+    x1 = r1 * Math.cos(theta) + sw.x;
+    y1 = r1 * Math.sin(theta) + sw.y;
+    x2 = r2 * Math.cos(theta) + sw.x;
+    y2 = r2 * Math.sin(theta) + sw.y;
+    sw.context.beginPath();
+    sw.context.lineTo(x1, y1);
+    sw.context.lineTo(x2, y2);
+    sw.context.stroke();
+    sw.context.closePath();
+  }
+};
+drawWatch = function (sw) {
+  var ratio = sw.partial / sw.total,
+      end_angle = Math.PI * (2 * ratio - 0.5);
+  sw.context.beginPath();
+  sw.context.arc(sw.x, sw.y, sw.r, sw.init_angle, end_angle, false);
+  sw.context.lineWidth = sw.r * 2;
+  sw.context.strokeStyle = sw.fg_color;
+  sw.context.stroke();
+  sw.context.closePath();
+};
+draw = function (sw) {
+  drawBack(sw);
+  drawRuler(sw);
+  drawWatch(sw);
+};
+animate = function () {
+  stopwatch.context.clearRect(0, 0, gui.canvas.width, gui.canvas.height);
+  update(stopwatch);
+  draw(stopwatch);
+  
+  window.requestNextAnimationFrame(animate);
+};
+animate();
+
+/*
+ * event listener
+ */
+gui.button.addEventListener('click', function () {
+  stopwatch.init = Date.now();
+  switch (stopwatch.state) {
+    case 'ready':
+      if (!gui.total.value) gui.total.value = 1;
+      stopwatch.total *= gui.total.value;
+    case 'pause':
+      stopwatch.init = Date.now();
+      stopwatch.state = 'run';
+      gui.notice.textContent = '';
+      break;
+    case 'run':
+      stopwatch.state = 'pause';
+      gui.notice.textContent = '이어서 계속하려면 클릭!';
+      break;
+    default:
+      alert('오늘은 끝!');
+  }
+  console.log(stopwatch.state);
+});

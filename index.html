@@ -8,8 +8,19 @@
 <body>
   <div id="conatiner">
     <header>
+      <p>
+        오늘은 
+        <span id="today"></span>
+      </p>
+      <p>
+        <input type="number" id="total" />
+        시간 동안 공부하기
+      </p>
     </header>
     <canvas id="cvs" width="200" height="200"></canvas>
+    <div id="button">
+      <p id="notice">시간을 입력한 뒤 클릭!</p>
+    </div>
   </div>
   <script type="text/javascript" src="requestNextAnimationFrame.js"></script>
   <script type="text/javascript" src="script.js"></script>
