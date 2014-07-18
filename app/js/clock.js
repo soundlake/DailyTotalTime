@@ -1,15 +1,4 @@
 /*
- * GUI
- */
-var gui = {};
-gui.today = document.getElementById('today');
-gui.today.textContent = (new Date()).toLocaleDateString('ko-KR');
-gui.total = document.getElementById('total');
-gui.canvas = document.getElementById('cvs');
-gui.button = document.getElementById('button');
-gui.notice = document.getElementById('notice');
-
-/*
  * clock animation
  */
 var stopwatch = {
@@ -41,7 +30,7 @@ var update = function (sw) {
         }
     } else if (sw.state === 'run') {
         sw.state = 'stop';
-        alert('짝짝짝! 오늘의 할 일 끝!');
+        window.alert('짝짝짝! 오늘의 할 일 끝!');
     }
 };
 var drawBack = function (sw) {
@@ -110,7 +99,7 @@ animate();
 /*
  * event listener
  */
-gui.button.addEventListener('click', function () {
+gui.btnBig.addEventListener('click', function () {
     'use strict';
     stopwatch.init = Date.now();
     switch (stopwatch.state) {
@@ -127,6 +116,6 @@ gui.button.addEventListener('click', function () {
         gui.notice.textContent = '이어서 계속하려면 클릭!';
         break;
     default:
-        alert('오늘은 끝!');
+        window.alert('오늘은 끝!');
     }
 });

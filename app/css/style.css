@@ -2,6 +2,12 @@
   margin: 0;
   padding: 0;
 }
+.csrPtr {
+  cursor: pointer;
+}
+.hidden {
+  visibility: hidden;
+}
 
 body {
   background-color: #ffeab7;
@@ -21,11 +27,16 @@ header > p {
   margin: 5px;
 }
 
+#btnCfg {
+  position: absolute;
+  top: 5px; right: 5px;
+}
+
 input[type="number"] {
   width: 40px;
 }
 
-canvas, #button {
+canvas, #btnBig {
   position: absolute;
   top: 50px; right: 0; left: 0;
   width: 200px;
@@ -40,4 +51,12 @@ canvas, #button {
   width: 200px;
   
   text-align: center;
+}
+
+#dspCfg {
+  position: absolute;
+  top: 50px; left: 0;
+  width: 200px;
+  height: 200px;
+  background-color: #ffeab7;
 }
